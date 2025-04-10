@@ -1,0 +1,22 @@
+{
+	"geode": "4.3.1",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"id": "fryy_55.quest_disabling",
+	"name": "Quest disabling",
+	"version": "v1.0.0",
+	"developer": "Fryy_55",
+	"description": "Allows to prevent quests from being clickable",
+	"links": {
+		"source": "https://github.com/Fryy55/quest-disabling",
+		"community": "https://discord.com/invite/4vqtjfdhTk"
+	},
+	"tags": [
+		"enhancement",
+		"offline"
+	]
+}
