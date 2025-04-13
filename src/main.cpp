@@ -5,12 +5,18 @@ using namespace geode::prelude;
 
 
 class $modify(HCreatorLayer, CreatorLayer) {
+	struct Fields {
+		CCSpriteGrayscale* m_lockedQuestsSprite;
+		CCSpriteGrayscale* m_lockedQuestsExMarkSprite;
+	};
+
 	bool init() {
 		if (!CreatorLayer::init())
 			return false;
 
 		bool locked = Mod::get() -> getSavedValue<bool>("locked", false);
 
+		// Toggle button
 		auto button = CCMenuItemToggler::create(
 			CCSprite::createWithSpriteFrameName("GJ_lock_open_001.png"),
 			CCSprite::createWithSpriteFrameName("GJ_lock_001.png"),
@@ -24,65 +30,42 @@ class $modify(HCreatorLayer, CreatorLayer) {
 		menu -> addChild(button);
 		menu -> updateLayout();
 
+		// Locked sprite
+		auto sprite = CCSpriteGrayscale::createWithSpriteFrameName("GJ_challengeBtn_001.png");
+		auto exMark = CCSpriteGrayscale::createWithSpriteFrameName("exMark_001.png");
+
+		sprite -> addChild(exMark);
+		exMark -> setPosition({20.f, 83.6f});
+		exMark -> setScale(0.8f);
+		sprite -> setScale(0.8f);
+		sprite -> setVisible(false);
+		exMark -> setID("ex-mark-locked-sprite"_spr);
+		sprite -> setID("locked-sprite"_spr);
+
+		m_fields -> m_lockedQuestsSprite = sprite;
+		m_fields -> m_lockedQuestsExMarkSprite = exMark;
+
+		auto questsButton = static_cast<CCMenuItemSpriteExtra*>(m_questsSprite -> m_pParent);
+		questsButton -> addChildAtPosition(sprite, Anchor::Center);
+
+		// Lock if locked waow
 		if (locked) {
 			Mod::get() -> setSavedValue<bool>("locked", false);
 			onQuestsToggle(nullptr);
 		}
 
-		//this -> querySelector("")
 		return true;
 	}
 
-	void checkQuestsStatus() {
-		CreatorLayer::checkQuestsStatus();
-
-		if (m_questsSprite -> getChildrenCount()) {
-			m_questsSprite -> removeAllChildren();
-			addExMark(m_questsSprite, Mod::get() -> getSavedValue("locked", false));
-		}
-
-		return;
-	}
 
 	void onQuestsToggle(CCObject* sender) {
 		bool locked = !Mod::get() -> getSavedValue<bool>("locked", false);
 		Mod::get() -> setSavedValue<bool>("locked", locked);
 
-		auto questsButton = static_cast<CCMenuItemSpriteExtra*>(m_questsSprite -> m_pParent);
-		auto sprite = (
-			locked ?
-				CCSpriteGrayscale::createWithSpriteFrameName("GJ_challengeBtn_001.png")
-			:
-				CCSprite::createWithSpriteFrameName("GJ_challengeBtn_001.png")
-		);
-		sprite -> setScale(0.8f);
-		sprite -> setCascadeColorEnabled(true);
-		sprite -> setColor({175, 175, 175});
-
-		if (m_questsSprite -> getChildrenCount()) {
-			addExMark(sprite, locked);
-
-			m_questsSprite -> removeAllChildren();
-		}
-
-		questsButton -> removeAllChildren();
-		questsButton -> addChildAtPosition(sprite, Anchor::Center);
-		questsButton -> setEnabled(!locked);
-		m_questsSprite = sprite;
-
-		return;
-	}
-
-	void addExMark(CCSprite* sprite, bool locked) {
-		auto exMark = (
-			locked ?
-				CCSpriteGrayscale::createWithSpriteFrameName("exMark_001.png")
-			:
-				CCSprite::createWithSpriteFrameName("exMark_001.png")
-		);
-		sprite -> addChild(exMark);
-		exMark -> setPosition({20.f, 83.6f});
-		exMark -> setScale(0.8f);
+		m_fields -> m_lockedQuestsSprite -> setVisible(locked);
+		m_questsSprite -> setVisible(!locked);
+		m_fields -> m_lockedQuestsExMarkSprite -> setVisible(m_questsSprite -> getChildrenCount());
+		static_cast<CCMenuItemSpriteExtra*>(m_questsSprite -> m_pParent) -> setEnabled(!locked);
 
 		return;
 	}
