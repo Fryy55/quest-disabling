@@ -6,8 +6,8 @@ using namespace geode::prelude;
 
 class $modify(HCreatorLayer, CreatorLayer) {
 	struct Fields {
-		CCSpriteGrayscale* m_lockedQuestsSprite;
-		CCSpriteGrayscale* m_lockedQuestsExMarkSprite;
+		CCSprite* m_lockedQuestsSprite;
+		CCSprite* m_lockedQuestsExMarkSprite;
 	};
 
 	bool init() {
