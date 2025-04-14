@@ -31,21 +31,30 @@ class $modify(HCreatorLayer, CreatorLayer) {
 		menu -> updateLayout();
 
 		// Locked sprite
-		auto sprite = CCSpriteGrayscale::createWithSpriteFrameName("GJ_challengeBtn_001.png");
-		auto exMark = CCSpriteGrayscale::createWithSpriteFrameName("exMark_001.png");
+		auto sprite = CCSprite::createWithSpriteFrameName("GJ_challengeBtn_001.png");
+		auto exMark = CCSprite::createWithSpriteFrameName("exMark_001.png");
+		auto lockSprite = CCSprite::createWithSpriteFrameName("GJ_lock_001.png");
 
-		sprite -> addChild(exMark);
+		sprite -> setScale(0.8f);
+		sprite -> setColor(ccGRAY);
+		sprite -> setID("locked-sprite"_spr);
 		exMark -> setPosition({20.f, 83.6f});
 		exMark -> setScale(0.8f);
-		sprite -> setScale(0.8f);
-		sprite -> setVisible(false);
+		exMark -> setColor(ccGRAY);
 		exMark -> setID("ex-mark-locked-sprite"_spr);
-		sprite -> setID("locked-sprite"_spr);
+		// TODO: values below
+		lockSprite -> setPosition({});
+		lockSprite -> setScale();
+		lockSprite -> setID("lock-sprite"_spr);
+
+		sprite -> addChild(exMark);
+		sprite -> addChild(lockSprite);
 
 		m_fields -> m_lockedQuestsSprite = sprite;
 		m_fields -> m_lockedQuestsExMarkSprite = exMark;
 
 		auto questsButton = static_cast<CCMenuItemSpriteExtra*>(m_questsSprite -> m_pParent);
+		sprite -> setVisible(false);
 		questsButton -> addChildAtPosition(sprite, Anchor::Center);
 
 		// Lock if locked waow
