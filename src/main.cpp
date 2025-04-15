@@ -5,6 +5,33 @@
 using namespace geode::prelude;
 
 
+class ExMarkSprite final : public CCSprite {
+public:
+	static ExMarkSprite* createWithSpriteFrameName(char const* frameName) {
+		auto ret = new ExMarkSprite;
+		if (ret -> initWithSpriteFrameName(frameName)) {
+			ret -> autorelease();
+			return ret;
+		}
+
+		delete ret;
+		return nullptr;
+	}
+	void setQuestsSprite(CCSprite* questsSprite) {
+		m_questsSprite = questsSprite;
+
+		return;
+	}
+private:
+	CCSprite* m_questsSprite;
+
+	void update(float dt) override {
+		this -> setVisible(m_questsSprite -> getChildrenCount());
+
+		return;
+	}
+};
+
 class $modify(HCreatorLayer, CreatorLayer) {
 	struct Fields {
 		CCSprite* m_lockedQuestsSprite;
@@ -28,7 +55,7 @@ class $modify(HCreatorLayer, CreatorLayer) {
 
 		lockButton -> toggle(locked);
 		auto offSpr = lockButton -> m_offButton -> getChildByType<CCSprite>(0);
-		offSpr -> setPositionY(offSpr -> getPositionY() + 3.f);
+		offSpr -> setPositionY(offSpr -> getPositionY() + 4.f);
 		lockButton -> setID("quests-toggle"_spr);
 		lockMenu -> setContentSize({30.f, 30.f});
 		lockMenu -> setScale(0.75f);
@@ -38,7 +65,7 @@ class $modify(HCreatorLayer, CreatorLayer) {
 
 		// Locked sprite
 		auto sprite = CCSprite::createWithSpriteFrameName("GJ_challengeBtn_001.png");
-		auto exMark = CCSprite::createWithSpriteFrameName("exMark_001.png");
+		auto exMark = ExMarkSprite::createWithSpriteFrameName("exMark_001.png");
 
 		sprite -> addChild(exMark);
 
@@ -49,6 +76,8 @@ class $modify(HCreatorLayer, CreatorLayer) {
 		sprite -> setID("locked-sprite"_spr);
 		exMark -> setPosition({20.f, 83.6f});
 		exMark -> setScale(0.8f);
+		exMark -> setQuestsSprite(m_questsSprite);
+		exMark -> scheduleUpdate();
 		exMark -> setID("ex-mark-locked-sprite"_spr);
 
 		m_fields -> m_lockedQuestsSprite = sprite;
@@ -83,7 +112,6 @@ class $modify(HCreatorLayer, CreatorLayer) {
 
 		m_fields -> m_lockedQuestsSprite -> setVisible(locked);
 		m_questsSprite -> setVisible(!locked);
-		m_fields -> m_lockedQuestsExMarkSprite -> setVisible(m_questsSprite -> getChildrenCount());
 		static_cast<CCMenuItemSpriteExtra*>(m_questsSprite -> m_pParent) -> setEnabled(!locked);
 
 		return;
